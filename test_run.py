@@ -23,4 +23,3 @@ def connect_mongodb():
     collection.delete_many({})
 
     print("MongoClient connected\n")
-

@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Body
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel
 from pymongo import MongoClient
 
@@ -10,7 +10,7 @@ MONGO_DB_PORT = 8443
 
 
 class Management(BaseModel):
-    available: str
+    available: bool
     locker_id : int
     start_time: date
     end_time: date
@@ -28,12 +28,27 @@ app = FastAPI()
 
 
 def locker_avaliable(locker_id: int, status: bool):
-    is_avail = {"Available": status}
-    result = collection.find(is_avail)
-    lockers = list(result)
-    if len(lockers) == 0:
-        raise HTTPException(status_code=404, detail=f"No locker available right now")
-    return lockers
+    lst_unavail = []
+    lst_avail = []
+    if not status:
+        lst_unavail.append(collection.find({"Available" : status}))
+    else:
+        lst_avail.append(collection.find({"Available": status}))
+    current_date_and_time = datetime.now()
+
+
+    collection
+    for locker in lst_unavail:
+        time = datetime.strptime(end_time) - datetime.strptime(current_date_and_time)
+        return time
+
+
+
+
+def put_items(locker_id, items):
+    if len(items) == 0:
+        raise HTTPException(status_code=404, detail=f"You cannot put 0 item in locker")
+    collection.update_one({'locker_id': locker_id}, {'$set': {"items": items}})
 
 
 
