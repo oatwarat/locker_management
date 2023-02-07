@@ -2,13 +2,18 @@ from fastapi import FastAPI, HTTPException, Body
 
 from datetime import date, datetime, timedelta
 
-from datetime import datetime
+
 from pydantic import BaseModel
 from pymongo import MongoClient
+import dotenv
+import os
 
+dotenv.load_dotenv(".env")
+usrn = os.getenv("userrname")
+pswd = os.getenv("password")
 DATABASE_NAME = "exceed12"
 COLLECTION_NAME = "locker_management"
-MONGO_DB_URL = f"mongodb://exceed12:q7MRP7qp@mongo.exceed19.online:8443/?authMechanism=DEFAULT"
+MONGO_DB_URL = f"mongodb://{usrn}:{pswd}@mongo.exceed19.online:8443/?authMechanism=DEFAULT"
 MONGO_DB_PORT = 8443
 
 
