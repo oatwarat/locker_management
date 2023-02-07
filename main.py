@@ -45,6 +45,8 @@ def reserve(management: Management):
         raise HTTPException(status_code=400, detail="Reservation can not be made")
     if l_id < 1 or l_id > 6:
         raise HTTPException(status_code=400, detail="Reservation can not be made")
+    #if locker not available
+    #   raise HTTPException(status_code=400, detail="Reservation can not be made")
     query = {
         "available": bool(management.available),
         "locker_id": l_id,
