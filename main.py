@@ -1,5 +1,8 @@
 from fastapi import FastAPI, HTTPException, Body
+
 from datetime import date, datetime, timedelta
+
+from datetime import datetime
 from pydantic import BaseModel
 from pymongo import MongoClient
 
@@ -12,8 +15,8 @@ MONGO_DB_PORT = 8443
 class Management(BaseModel):
     available: bool
     locker_id: int
-    start_time: date
-    end_time: date
+    start_time: datetime
+    end_time: datetime
     items: list
     user_id: int
 
@@ -90,15 +93,19 @@ def return_locker(student_id: int, locker_id: int, amount_paid: float):
     return {"change": change}
 
 
+
 @app.post("/reserve_locker")
 def reserve(management: Management):
-    start_time = management.start_time.strftime("%Y-%m-%d")
-    end_time = management.end_time.strftime("%Y-%m-%d")
+    start_time = management.start_time
+    end_time = management.end_time
     l_id = management.locker_id
     if start_time > end_time:
         raise HTTPException(status_code=400, detail="Reservation can not be made")
-    if l_id < 0 or l_id > 6:
+
+    if l_id < 1 or l_id > 6:
         raise HTTPException(status_code=400, detail="Reservation can not be made")
+    #if locker not available
+    #   raise HTTPException(status_code=400, detail="Reservation can not be made")
     query = {
         "available": bool(management.available),
         "locker_id": l_id,
@@ -116,3 +123,10 @@ def reserve(management: Management):
         "items": management.items,
         "user_id": management.user_id
     }
+
+
+@app.delete("/reserve_locker/delete/{locker_id}/{start_time}")
+def delete_reservation(locker_id: int, start_time: datetime):
+    collection.delete_one({"locker_id": locker_id, "start_time": start_time})
+    return "removed a reservation from locker " + str(locker_id)
+
